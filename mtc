@@ -1,7 +1,7 @@
-q0[init]-- Pre ^ ~Done --q1
-q0[init]-- Pre ^ Done ^ Post --q3[final]
+q0[init]-- Pre & ~Done --q1
+q0[init]-- Pre & Done & Post --q3[final]
 q0[init]-- ~Pre --q2[final]
 q2[final]-- true --q2[final]
 q1-- ~Done --q1
-q1-- Done ^ Post --q3[final]
-q3[final]-- Done ^ Post --q3[final]
+q1-- Done & Post --q3[final]
+q3[final]-- Done & Post --q3[final]

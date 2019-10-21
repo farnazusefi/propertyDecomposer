@@ -1,6 +1,12 @@
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.logicng.formulas.Formula;
+import org.logicng.formulas.FormulaFactory;
+import org.logicng.io.parsers.ParserException;
+import org.logicng.io.parsers.PropositionalParser;
 
 import com.rits.cloning.Cloner;
 
@@ -15,13 +21,13 @@ public class PropertyDecomposer {
 		livenessBuchiAutomata = new BuchiAutomata();
 	}
 
-	public void decomposeBuchiAutomata(BuchiAutomata inputBuchiAutomata) {
+	public void decomposeBuchiAutomata(BuchiAutomata inputBuchiAutomata) throws ParserException {
 
 		safetyBuchiAutomata = createSafetyBuchiAutomataOfProperty(inputBuchiAutomata);
 		livenessBuchiAutomata = createLivenessBuchiAutomata(inputBuchiAutomata);
 	}
 
-	private BuchiAutomata createLivenessBuchiAutomata(BuchiAutomata inputBuchiAutomata) {
+	private BuchiAutomata createLivenessBuchiAutomata(BuchiAutomata inputBuchiAutomata) throws ParserException {
 
 		Cloner cloner = new Cloner();
 		BuchiAutomata outBuchiAutomata = cloner.deepClone(inputBuchiAutomata);
@@ -35,24 +41,22 @@ public class PropertyDecomposer {
 			for (Entry<String, State> tableElement : entrySet) {
 				State state = tableElement.getValue();
 				Set<Transition> transitions = state.getTransitions();
-				String trapLabel = "true";
+				FormulaFactory trapFormulaFactory = new FormulaFactory();
+				final PropositionalParser p = new PropositionalParser(trapFormulaFactory);
+				Formula trapFormula = p.parse("true");
 				if (transitions != null) {
-					trapLabel = "~ (";
+					HashSet<Formula> conditionFormulaSet = new HashSet<Formula>();
 					for (Transition transition : transitions) {
-						String condition = transition.getCondition();
-						trapLabel += "(" + condition + ")" + "V";
+						conditionFormulaSet.add(transition.getCondition());
 					}
-					String substring = trapLabel.substring(trapLabel.length() - 1, trapLabel.length());
-					if (substring.equals("V"))
-						trapLabel = trapLabel.substring(0, trapLabel.length() - 2);
-					trapLabel += ")";
+					trapFormula = trapFormulaFactory.not(trapFormulaFactory.and(conditionFormulaSet));
 				}
-				state.addTransition(new Transition(trapLabel, trapState));
+				state.addTransition(new Transition(trapFormula, trapState));
 			}
 		} else {
 			BuchiAutomata envBuchiAutomata = createEnvBuchiAutomata(inputBuchiAutomata);
 
-			//TODO calculating m X env
+			// TODO calculating m X env
 		}
 		return outBuchiAutomata;
 	}
@@ -62,9 +66,9 @@ public class PropertyDecomposer {
 		BuchiAutomata envBuchiAutomata = cloner.deepClone(inputBuchiAutomata);
 		Hashtable<String, State> states = envBuchiAutomata.getStates();
 		State trapState = new State("qtrap");
-		
+
 		Set<Entry<String, State>> entrySet = states.entrySet();
-		
+
 		for (Entry<String, State> tableElement : entrySet) {
 			State state = tableElement.getValue();
 			if (state.getType().equals(StateType.FINAL))
@@ -72,7 +76,7 @@ public class PropertyDecomposer {
 		}
 		trapState.setType(StateType.FINAL);
 		envBuchiAutomata.addState(trapState);
-		// TODO transition of env 
+		// TODO transition of env
 		return null;
 	}
 

@@ -1,9 +1,14 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.logicng.formulas.Formula;
+import org.logicng.formulas.FormulaFactory;
+import org.logicng.io.parsers.ParserException;
+import org.logicng.io.parsers.PropositionalParser;
+
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ParserException {
 
 		String fileName = "mtc";
 		BuchiAutomata inputBuchiAutomata = constructBuchiAutomataFromFile(fileName);
@@ -13,7 +18,7 @@ public class Main {
 		BuchiAutomata safetyBuchiAutomata = decomposer.getSafetyBuchiAutomata();
 	}
 
-	private static BuchiAutomata constructBuchiAutomataFromFile(String fileName) throws IOException {
+	private static BuchiAutomata constructBuchiAutomataFromFile(String fileName) throws IOException, ParserException {
 
 		BuchiAutomata buchiAutomata = new BuchiAutomata();
 
@@ -24,7 +29,9 @@ public class Main {
 			String[] arrOfStr = line.split("--");
 			String fromStateLabel = arrOfStr[0];
 			String toStateLabel = arrOfStr[2];
-			String transitionLabel = arrOfStr[1];
+			FormulaFactory f = new FormulaFactory();
+			PropositionalParser p = new PropositionalParser(f);
+			Formula transitionFormula = p.parse(arrOfStr[1]);
 			State fromState;
 			State toState;
 			if (fromStateLabel.contains("[init]")) {
@@ -79,7 +86,7 @@ public class Main {
 					buchiAutomata.addState(toState);
 				}
 			}
-			Transition transition = new Transition(transitionLabel, toState);
+			Transition transition = new Transition(transitionFormula, toState);
 			fromState.addTransition(transition);
 		}
 		file.close();

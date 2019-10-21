@@ -1,11 +1,12 @@
+import org.logicng.formulas.Formula;
 
 public class Transition {
 
-	private String condition;
+	private Formula condition;
 	private State nextState;
 	
 	
-	public Transition(String transitionLabel, State nextState) {
+	public Transition(Formula transitionLabel, State nextState) {
 		super();
 		this.condition = transitionLabel;
 		this.nextState = nextState;
@@ -19,11 +20,11 @@ public class Transition {
 		this.nextState = nextState;
 	}
 
-	public String getCondition() {
+	public Formula getCondition() {
 		return condition;
 	}
 
-	public void setCondition(String condition) {
+	public void setCondition(Formula condition) {
 		this.condition = condition;
 	}
 }
