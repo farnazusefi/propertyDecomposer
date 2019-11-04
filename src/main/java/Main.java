@@ -1,10 +1,13 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.logicng.formulas.Formula;
 import org.logicng.formulas.FormulaFactory;
 import org.logicng.io.parsers.ParserException;
 import org.logicng.io.parsers.PropositionalParser;
+
+import com.bpodgursky.jbool_expressions.Expression;
+import com.bpodgursky.jbool_expressions.parsers.ExprParser;
+import com.bpodgursky.jbool_expressions.rules.RuleSet;
 
 public class Main {
 
@@ -31,7 +34,7 @@ public class Main {
 			String toStateLabel = arrOfStr[2];
 			FormulaFactory f = new FormulaFactory();
 			PropositionalParser p = new PropositionalParser(f);
-			Formula transitionFormula = p.parse(arrOfStr[1]);
+			Expression<String> transitionFormula = RuleSet.simplify(ExprParser.parse(arrOfStr[1]));
 			State fromState;
 			State toState;
 			if (fromStateLabel.contains("[init]")) {

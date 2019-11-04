@@ -1,12 +1,14 @@
 import org.logicng.formulas.Formula;
 
+import com.bpodgursky.jbool_expressions.Expression;
+
 public class Transition {
 
-	private Formula condition;
+	private Expression<String> condition;
 	private State nextState;
 	
 	
-	public Transition(Formula transitionLabel, State nextState) {
+	public Transition(Expression<String> transitionLabel, State nextState) {
 		super();
 		this.condition = transitionLabel;
 		this.nextState = nextState;
@@ -20,11 +22,11 @@ public class Transition {
 		this.nextState = nextState;
 	}
 
-	public Formula getCondition() {
+	public Expression<String> getCondition() {
 		return condition;
 	}
 
-	public void setCondition(Formula condition) {
+	public void setCondition(Expression<String> condition) {
 		this.condition = condition;
 	}
 }

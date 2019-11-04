@@ -1,4 +1,12 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import com.bpodgursky.jbool_expressions.And;
+import com.bpodgursky.jbool_expressions.Expression;
+import com.bpodgursky.jbool_expressions.parsers.ExprParser;
+import com.bpodgursky.jbool_expressions.rules.RuleSet;
 
 public class BuchiAutomata {
 
@@ -35,7 +43,40 @@ public class BuchiAutomata {
 	}
 
 	public static boolean isDeterministic(BuchiAutomata outBuchiAutomata) {
-		// TODO Auto-generated method stub
+		Hashtable<String, State> states = outBuchiAutomata.getStates();
+		Set<Entry<String, State>> entrySet = states.entrySet();
+		int numOfInitialStates = 0;
+		for (Entry<String, State> tableElement : entrySet) {
+			State state = tableElement.getValue();
+			if (state.getType().equals(StateType.INIT)) {
+				numOfInitialStates++;
+				if (numOfInitialStates > 1) {
+					return false;
+				}
+			}
+
+		}
+		for (Entry<String, State> tableElement : entrySet) {
+			ArrayList<Expression<String>> transitionStatements = new ArrayList<Expression<String>>();
+			State state = tableElement.getValue();
+			Set<Transition> transitions = state.getTransitions();
+			for (Transition trans : transitions) {
+				Expression<String> condition = trans.getCondition();
+				transitionStatements.add(condition);
+			}
+			for (int i = 0; i < transitionStatements.size(); i++) {
+				Expression<String> firstStatement = transitionStatements.get(i);
+				for (int j = i + 1; j < transitionStatements.size(); j++) {
+					Expression<String> secondStatement = transitionStatements.get(j);
+					Expression<String> simplified = RuleSet.simplify(And.of(firstStatement, secondStatement));
+					Expression<String> fExp = ExprParser.parse("false");
+					if (!simplified.equals(fExp)) {
+						return false;
+					}
+				}
+			}
+
+		}
 		return true;
 	}
 }

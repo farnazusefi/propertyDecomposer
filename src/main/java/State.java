@@ -1,10 +1,10 @@
 import java.util.HashSet;
 import java.util.Set;
 
-enum StateType 
-{ 
-    INIT, MIDDLE, FINAL; 
+enum StateType {
+	INIT, MIDDLE, FINAL;
 }
+
 public class State {
 	static int unique_id;
 	private int id;
@@ -17,12 +17,12 @@ public class State {
 		resetTransitions();
 		type = StateType.MIDDLE;
 	}
-	
-//	public State() {
-//		setId(unique_id++);
-//		resetTransitions();
-//		type = StateType.MIDDLE;
-//	}
+
+	// public State() {
+	// setId(unique_id++);
+	// resetTransitions();
+	// type = StateType.MIDDLE;
+	// }
 
 	final void resetTransitions() {
 		transitions = new HashSet<Transition>();
@@ -36,13 +36,16 @@ public class State {
 		this.id = id;
 	}
 
-	
-	public Set<Transition> getTransitions()	{
+	public Set<Transition> getTransitions() {
 		return transitions;
 	}
-	
-	public void addTransition(Transition t)	{
+
+	public void addTransition(Transition t) {
 		transitions.add(t);
+	}
+
+	public void removeTransition(Transition t) {
+		transitions.remove(t);
 	}
 
 	public StateType getType() {
@@ -60,5 +63,5 @@ public class State {
 	private void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 }
