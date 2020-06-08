@@ -1,3 +1,5 @@
+package main.java;
+
 import org.logicng.formulas.Formula;
 
 import com.bpodgursky.jbool_expressions.Expression;
